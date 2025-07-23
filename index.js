@@ -1,5 +1,4 @@
-
-  const searchInput = document.querySelector('.search-input');
+const searchInput = document.querySelector('.search-input');
   const movieList = document.querySelector('.movie-list');
   let search = 'movie';
 
@@ -34,8 +33,8 @@
     return `<div class="movie-card" onclick="showMovieimdb('${movie.imdbID}')">
       <div class="movie-card__container">
         <h3>${movie.Title}</h3>
-        <p><b>Year:</b> ${movie.Year}</p>
-        <p><b>Poster:</b> <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}" alt="${movie.Title} Poster" width="150"></p>
+        <p class="movie-year"><b>Year:</b> ${movie.Year}</p>
+        <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/150'}" alt="${movie.Title} Poster" />
       </div>
     </div>`;
   }
@@ -44,4 +43,39 @@
     search = event.target.value;
     fetchMovies(search);
   }
-;
+
+window.showMovieimdb = showMovieimdb;
+
+function sortMovies() {
+  const select = document.getElementById('sort');
+  const criteria = select.value;
+  const movieList = document.querySelector('.movie-list');
+  const movies = Array.from(movieList.children);
+
+  movies.sort((a, b) => {
+    const titleA = a.querySelector('h3').innerText.toLowerCase();
+    const titleB = b.querySelector('h3').innerText.toLowerCase();
+
+    const yearA = parseInt(a.querySelector('.movie-card__container p:nth-of-type(2)').innerText.replace(/\D/g, ''), 10);
+    const yearB = parseInt(b.querySelector('.movie-card__container p:nth-of-type(2)').innerText.replace(/\D/g, ''), 10);
+
+    if (criteria === 'title') {
+      return titleA.localeCompare(titleB);
+    } else if (criteria === 'year') {
+      return yearA - yearB;
+    }
+    return 0;
+  });
+
+  
+  while (movieList.firstChild) {
+    movieList.removeChild(movieList.firstChild);
+  }
+
+  
+  movies.forEach(movie => {
+    movieList.appendChild(movie);
+  });
+}
+
+
